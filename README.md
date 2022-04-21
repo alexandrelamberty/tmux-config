@@ -11,7 +11,7 @@ This is part of of [IKBS](https://github.com/alexandrelamberty/ikbs).
 
 ## Features
 
-- Session Backup and Restore
+- Session backup and restore
 - Create and kill session menu
 
 ## Installation

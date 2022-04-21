@@ -5,13 +5,7 @@ PACKAGE=config
 TARGET=$HOME
 
 printf "Tmux configuration installation\n"
-printf "Clean target\n"
-
-# Remove needed files
+stow -vDt "$TARGET" $PACKAGE
 rm -rf "$HOME/.tmux.conf"
-
-# Stow the package
-printf "Stow in %s\n" "$TARGET" 
 stow -vSt "$TARGET" $PACKAGE
-
 
