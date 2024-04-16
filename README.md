@@ -5,6 +5,10 @@ specifically for *nix environments, providing a streamlined and efficient Tmux
 experience. With a focus on simplicity and productivity, this configuration
 incorporates essential features and key bindings to enhance your Tmux workflow.
 
+## Requirements
+
+- **Stow**: Symlink farm manager. <https://www.gnu.org/software/stow/manual/stow.html>
+
 ## Features
 
 - **Tmux Plugin Manager**: Facilitates easy management of Tmux plugins.
