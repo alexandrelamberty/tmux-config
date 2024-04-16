@@ -46,6 +46,10 @@ tmux
 
 `<prefix>` + <kbd>I</kbd>
 
+In this configuration the prefix combination is : <kbd>Ctrl</kbd> + <kbd>Space</kbd>
+
+> TODO automate this step.
+
 ## Key bindings
 
 This configuration use the <kbd>Ctrl</kbd> + <kbd>Space</kbd> as `<prefix>`.
