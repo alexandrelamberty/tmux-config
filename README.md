@@ -35,6 +35,18 @@ Each theme exposes the palette via `@theme-*` user options which are consumed by
 `config/.config/tmux/layouts/default.conf`.  Feel free to create additional
 themes by following the same pattern (define the palette and set `@theme-ready`).
 
+### Runtime theme switching
+
+Press `<prefix>` + <kbd>T</kbd> to open a popup menu listing every theme under
+`config/.config/tmux/themes/`.  After selecting a theme the script re-sources
+the palette and default layout so the status bar updates immediately.
+
+### Runtime layout switching
+
+Press `<prefix>` + <kbd>L</kbd> to choose between layout files inside
+`config/.config/tmux/layouts/`.  This is handy if you keep alternative status
+bar/window layouts for different workflows.
+
 ## Installation
 
 To install this custom Tmux configuration, follow these steps:
