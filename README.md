@@ -11,8 +11,29 @@ incorporates essential features and key bindings to enhance your Tmux workflow.
 
 ## Features
 
+- **Material inspired themes**: Matching dark/light palettes with consolidated pane, status bar and message styling.
 - **Tmux Plugin Manager**: Facilitates easy management of Tmux plugins.
 - **Session Backup and Restore**: Utilizes Tmux plugins Resurrect and Continuum for session management.
+  The default layout ties these colours into the status line (prefix indicator,
+  window list, host/path segments and clock) so every session looks consistent.
+
+## Themes
+
+Two themes live under `config/.config/tmux/themes/`:
+
+- `material-dark.conf` (default)
+- `material-light.conf`
+
+Pick a theme by exporting `TMUX_THEME` before starting Tmux:
+
+```sh
+export TMUX_THEME=material-light   # or material-dark
+tmux
+```
+
+Each theme exposes the palette via `@theme-*` user options which are consumed by
+`config/.config/tmux/layouts/default.conf`.  Feel free to create additional
+themes by following the same pattern (define the palette and set `@theme-ready`).
 
 ## Installation
 
@@ -68,6 +89,18 @@ This configuration use the <kbd>Ctrl</kbd> + <kbd>Space</kbd> as `<prefix>`.
 | Move right pane | `<prefix>` + <kbd>l</kbd> |
 | Close pane | `<prefix>` + <kbd>X</kbd> |
 | Reload config | `<prefix>` + <kbd>R</kbd> |
+
+### Status line
+
+The top status bar displays (left to right):
+
+- Prefix indicator (colour flips when the prefix is pressed)
+- Session name and host
+- Active pane path
+- Resurrect/continuum status
+- Date and 24h clock
+
+You can tweak the layout inside `config/.config/tmux/layouts/default.conf`.
 
 ## Plugin management
 
