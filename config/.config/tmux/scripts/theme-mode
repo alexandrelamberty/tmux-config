@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Toggle, or explicitly set, the active Tmux theme mode.
+
+set -euo pipefail
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/tmux"
+active_theme_file="$config_dir/themes/active.conf"
+requested_mode="${1:-toggle}"
+
+usage() {
+    printf 'Usage: %s [toggle|light|dark]\n' "${0##*/}" >&2
+}
+
+current_theme_file=$(awk '/^source-file / { print $2; exit }' "$active_theme_file")
+[[ -n "$current_theme_file" ]] || { printf 'No active Tmux theme found.\n' >&2; exit 1; }
+
+case "$requested_mode" in
+    toggle)
+        case "$current_theme_file" in
+            *_light.conf) mode=dark ;;
+            *_dark.conf) mode=light ;;
+            *) printf 'Cannot determine the active Tmux theme mode.\n' >&2; exit 1 ;;
+        esac
+        ;;
+    light|dark) mode=$requested_mode ;;
+    *) usage; exit 2 ;;
+esac
+
+current_theme_path="${current_theme_file/#\~/$HOME}"
+target_theme_path=$(sed -E "s/_(light|dark)\.conf$/_${mode}.conf/" <<<"$current_theme_path")
+[[ -f "$target_theme_path" ]] || { printf 'Theme variant not found: %s\n' "$target_theme_path" >&2; exit 1; }
+
+printf 'source-file %s\n' "$target_theme_path" > "$active_theme_file"
+tmux source-file "$active_theme_file"
+tmux source-file "$config_dir/layouts/default.conf"
+tmux set-option -gu status-format
+
+theme_background=$(tmux show-option -gqv @theme-bg)
+theme_text=$(tmux show-option -gqv @theme-text)
+theme_surface_alt=$(tmux show-option -gqv @theme-surface-alt)
+theme_muted=$(tmux show-option -gqv @theme-muted)
+theme_accent=$(tmux show-option -gqv @theme-accent)
+tmux set-option -g status-left-style "bg=$theme_background,fg=$theme_text"
+tmux set-option -g status-right-style "bg=$theme_background,fg=$theme_text"
+tmux set-option -g status-bg "$theme_background"
+tmux set-option -g status-fg "$theme_text"
+tmux set-window-option -g window-status-style "bg=$theme_background,fg=$theme_muted"
+tmux set-window-option -g window-status-current-style "bg=$theme_surface_alt,fg=$theme_accent"
+
+tmux display-message "Tmux switched to $mode mode"

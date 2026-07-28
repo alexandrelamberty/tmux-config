@@ -19,17 +19,15 @@ incorporates essential features and key bindings to enhance your Tmux workflow.
 
 ## Themes
 
-Two themes live under `config/.config/tmux/themes/`:
+Themes use paired variants in their own directory, for example:
 
-- `material-dark.conf` (default)
-- `material-light.conf`
-
-Pick a theme by exporting `TMUX_THEME` before starting Tmux:
-
-```sh
-export TMUX_THEME=material-light   # or material-dark
-tmux
+```text
+themes/material/material_dark.conf
+themes/material/material_light.conf
 ```
+
+`themes/active.conf` records the selected variant and is loaded whenever Tmux
+reloads its configuration.
 
 Each theme exposes the palette via `@theme-*` user options which are consumed by
 `config/.config/tmux/layouts/default.conf`.  Feel free to create additional
@@ -37,9 +35,9 @@ themes by following the same pattern (define the palette and set `@theme-ready`)
 
 ### Runtime theme switching
 
-Press `<prefix>` + <kbd>T</kbd> to open a popup menu listing every theme under
-`config/.config/tmux/themes/`.  After selecting a theme the script re-sources
-the palette and default layout so the status bar updates immediately.
+Press `<prefix>` + <kbd>Ctrl</kbd> + <kbd>T</kbd> to open the theme-selection
+popup. Press `<prefix>` + <kbd>T</kbd> to toggle light/dark mode. Both commands
+re-source the palette and default layout so the status bar updates immediately.
 
 ### Runtime layout switching
 

@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Select a Tmux theme while retaining the active light/dark mode.
+
+set -euo pipefail
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/tmux"
+themes_dir="$config_dir/themes"
+active_theme_file="$themes_dir/active.conf"
+theme=''
+
+usage() {
+    printf 'Usage: %s [-t theme]\n' "${0##*/}" >&2
+}
+
+current_mode() {
+    local current_file
+    current_file=$(awk '/^source-file / { print $2; exit }' "$active_theme_file")
+
+    case "$current_file" in
+        *_light.conf) printf 'light\n' ;;
+        *_dark.conf) printf 'dark\n' ;;
+        *) printf 'Cannot determine the active Tmux theme mode.\n' >&2; exit 1 ;;
+    esac
+}
+
+while getopts ':t:h' option; do
+    case "$option" in
+        t) theme=$OPTARG ;;
+        h) usage; exit 0 ;;
+        *) usage; exit 2 ;;
+    esac
+done
+
+[[ -f "$active_theme_file" ]] || { printf 'Active theme file not found: %s\n' "$active_theme_file" >&2; exit 1; }
+
+if [[ -z "$theme" ]]; then
+    command -v fzf >/dev/null 2>&1 || { printf 'fzf is required for interactive selection.\n' >&2; exit 1; }
+    theme=$(find "$themes_dir" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | fzf --prompt='Tmux theme > ') || exit 0
+fi
+
+mode=$(current_mode)
+theme_file=$(find "$themes_dir/$theme" -maxdepth 1 -type f -name "*_${mode}.conf" -print -quit)
+[[ -n "$theme_file" ]] || { printf 'No %s variant for Tmux theme: %s\n' "$mode" "$theme" >&2; exit 1; }
+
+printf 'source-file %s\n' "$theme_file" > "$active_theme_file"
+tmux source-file "$active_theme_file"
+tmux source-file "$config_dir/layouts/default.conf"
+tmux set-option -gu status-format
+
+theme_background=$(tmux show-option -gqv @theme-bg)
+theme_text=$(tmux show-option -gqv @theme-text)
+theme_surface_alt=$(tmux show-option -gqv @theme-surface-alt)
+theme_muted=$(tmux show-option -gqv @theme-muted)
+theme_accent=$(tmux show-option -gqv @theme-accent)
+tmux set-option -g status-left-style "bg=$theme_background,fg=$theme_text"
+tmux set-option -g status-right-style "bg=$theme_background,fg=$theme_text"
+tmux set-option -g status-bg "$theme_background"
+tmux set-option -g status-fg "$theme_text"
+tmux set-window-option -g window-status-style "bg=$theme_background,fg=$theme_muted"
+tmux set-window-option -g window-status-current-style "bg=$theme_surface_alt,fg=$theme_accent"
+
+tmux display-message "Tmux theme switched to $theme ($mode mode)"
