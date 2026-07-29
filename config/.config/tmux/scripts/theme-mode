@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Toggle, or explicitly set, the active Tmux theme mode.
+# It updates the active theme configuration file and reloads Tmux with the new theme settings.
 
 set -euo pipefail
 
